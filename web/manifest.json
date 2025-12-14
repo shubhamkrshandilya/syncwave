@@ -1,0 +1,36 @@
+{
+    "name": "SyncWave - Stream & Sync Your Music",
+    "short_name": "SyncWave",
+    "description": "Cross-platform music streaming app with playlist sharing and multi-device synchronization",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0F172A",
+    "theme_color": "#6366F1",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable any"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable any"
+        }
+    ],
+    "categories": ["music", "entertainment"],
+    "screenshots": [],
+    "shortcuts": [
+        {
+            "name": "Home",
+            "short_name": "Player",
+            "description": "Open music player",
+            "url": "/",
+            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+        }
+    ]
+}

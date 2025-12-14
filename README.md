@@ -1,8 +1,8 @@
 # 🎵 SyncWave
 
-**Cross-platform music streaming app with playlist sharing and multi-device synchronization**
+**Cross-platform local music player with background playback and system media controls**
 
-SyncWave is a beautiful, feature-rich music player built with Flutter that allows you to stream music, create playlists, and sync playback across multiple devices in real-time.
+SyncWave is a beautiful, feature-rich music player built with Flutter that plays your local music files with full background playback support and system notification controls on iOS, Android, and macOS.
 
 ---
 
@@ -10,27 +10,28 @@ SyncWave is a beautiful, feature-rich music player built with Flutter that allow
 
 ### 🎶 Music Player
 - **Modern Player UI** - Beautiful gradient-based design with album art display
-- **Playback Controls** - Play, pause, skip, shuffle, and repeat
+- **Playback Controls** - Play, pause, skip, seek with intuitive controls
 - **Queue Management** - View and manage your playback queue
+- **Auto-play Next** - Automatically plays the next song in queue
 - **Progress Tracking** - Real-time position tracking with seek support
 
-### 📚 Playlist Management
-- **Create Playlists** - Organize your music into custom playlists
-- **Edit & Delete** - Full CRUD operations for playlists
-- **Playlist Details** - View all songs in a playlist
-- **Quick Play** - Play entire playlists with one tap
+### 🎵 Background Playback
+- **System Notifications** - Control playback from notification panel (iOS, Android)
+- **Lock Screen Controls** - Full media controls on iOS Control Center and Android lock screen
+- **Background Audio** - Music continues playing when app is in background
+- **Media Metadata** - Song title, artist, album, and artwork in system notifications
 
-### 🔄 Device Synchronization
-- **Multi-Device Sync** - Keep playback in sync across devices
-- **Device Discovery** - Automatically find nearby devices
-- **Connection Status** - See which devices are currently connected
-- **Sync Settings** - Configure auto-sync, playlist sync, and more
+### 📚 Music Library
+- **Local File Support** - Play music from your device storage
+- **Multi-select Import** - Import multiple songs at once via file picker
+- **Playlist Management** - Create and manage custom playlists
+- **Persistent Storage** - Songs and playlists saved using Hive database
 
-### 🤝 Sharing & Collaboration
-- **QR Code Sharing** - Share playlists via QR codes
-- **Room Codes** - Join music sessions with 6-digit codes
-- **Host Sessions** - Create rooms for friends to join
-- **Real-time Sync** - Everyone hears the same music at the same time
+### 🎨 Beautiful Design
+- **Gradient UI** - Modern gradient-based design with blur effects
+- **Responsive Layout** - Adapts to different screen sizes and orientations
+- **Album Artwork** - Displays embedded album art from music files
+- **Dark Theme** - Easy on the eyes for night-time listening
 
 ---
 
@@ -40,37 +41,50 @@ SyncWave is a beautiful, feature-rich music player built with Flutter that allow
 
 ```
 lib/
-├── main.dart                 # App entry point & navigation
+├── main.dart                 # App entry point with audio service initialization
 ├── config/
 │   ├── app_theme.dart        # Theme colors, gradients & styles
 │   └── app_constants.dart    # App-wide constants
 ├── models/
 │   ├── song.dart             # Song data model
 │   ├── playlist.dart         # Playlist data model
-│   └── device.dart           # Connected device model
+│   └── device.dart           # Device model
 ├── controllers/
-│   ├── player_controller.dart    # Music player state management
+│   ├── player_controller.dart    # Music player state & queue management
 │   └── playlist_controller.dart  # Playlist CRUD operations
 ├── services/
-│   └── audio_service.dart    # Audio playback using just_audio
+│   ├── audio_service.dart    # Audio playback using just_audio
+│   ├── audio_handler.dart    # Background audio & notification controls
+│   └── music_scanner.dart    # Local music file scanning
 ├── views/
-│   ├── home_screen.dart      # Main player screen
+│   ├── home_screen.dart      # Main player screen with queue
 │   ├── playlists_screen.dart # Playlist management
-│   ├── share_screen.dart     # QR sharing & room codes
-│   └── sync_screen.dart      # Device sync management
+│   └── library_screen.dart   # Music library view
 └── widgets/
-    ├── music_player_card.dart # Album art display
-    └── player_controls.dart   # Playback control widgets
+    ├── music_player_card.dart # Album art display with controls
+    └── player_controls.dart   # Play/pause/skip buttons
 ```
 
-### State Management
+### Key Technologies
+
+**Audio Stack:**
+- **just_audio** (^0.9.36) - High-quality audio playback engine
+- **audio_service** (^0.18.12) - Background playback and system media controls
+- **audio_session** (^0.1.18) - Audio session management for iOS/Android
+
+**State Management:**
 - **Provider** - Used for state management across the app
 - Controllers handle business logic and notify UI of changes
-- Services manage external integrations (audio, storage, networking)
+- Services manage audio playback and file operations
 
-### Data Persistence
-- **Hive** - Local storage for playlists and songs
-- **SharedPreferences** - User settings and preferences
+**Data Persistence:**
+- **Hive** - Local NoSQL database for playlists and song metadata
+- Stores library, playlists, and user preferences
+
+**File Handling:**
+- **file_picker** - Multi-select file import
+- **path_provider** - Platform-specific storage paths
+- **metadata_god** - Extract audio metadata (title, artist, album art)
 
 ---
 
@@ -79,12 +93,13 @@ lib/
 ### Prerequisites
 - Flutter SDK (3.10.0 or higher)
 - Dart SDK
-- iOS Simulator / Android Emulator / Physical Device
+- iOS device/simulator, Android device/emulator, or macOS
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
+   git clone https://github.com/shubhamkrshandilya/syncwave.git
    cd syncwave
    ```
 
@@ -93,65 +108,89 @@ lib/
    flutter pub get
    ```
 
-3. **Run the app**
+3. **Run on your platform**
+   
+   **iOS:**
    ```bash
-   flutter run
+   cd ios && pod install && cd ..
+   flutter run -d <your-ios-device-id>
+   ```
+   
+   **Android:**
+   ```bash
+   flutter run -d <your-android-device-id>
+   ```
+   
+   **macOS:**
+   ```bash
+   flutter run -d macos
    ```
 
 ### Platform-Specific Setup
 
-#### iOS
-```bash
-cd ios
-pod install
-cd ..
-flutter run
-```
+**iOS Requirements:**
+- Xcode 14.0 or higher
+- iOS 12.0 or higher
+- Code signing team configured in Xcode
+- Background audio capability enabled in Info.plist
 
-#### Android
-```bash
-flutter run
-```
+**Android Requirements:**
+- Android SDK 21 (Lollipop) or higher
+- MainActivity extends `AudioServiceActivity`
+- Permissions: FOREGROUND_SERVICE, WAKE_LOCK
+- Audio service declared in AndroidManifest.xml
 
-#### Web
-```bash
-flutter run -d chrome
-```
-
-#### macOS
-```bash
-flutter run -d macos
-```
+**macOS Requirements:**
+- macOS 10.14 or higher
 
 ---
 
-## 📦 Dependencies
+## 📱 Usage
 
-### Core
-- `provider` - State management
-- `hive` & `hive_flutter` - Local database
-- `go_router` - Navigation (ready for future routing)
+### Importing Music
+1. Tap the **"Scan Music"** button on the home screen
+2. Use the file picker to select music files (supports multi-select)
+3. Songs are automatically added to your library
+4. Album art and metadata are extracted automatically
 
-### Audio
-- `just_audio` - Audio playback
-- `audio_service` - Background audio support
-- `audio_session` - Audio session management
+### Playing Music
+1. Browse your library or playlists
+2. Tap any song to start playback
+3. Use playback controls: Previous, Play/Pause, Next
+4. Drag the progress bar to seek within the song
+5. Queue shows upcoming songs
 
-### UI Components
-- `qr_flutter` - QR code generation
-- `mobile_scanner` - QR code scanning
-- `cached_network_image` - Image caching
-- `shimmer` - Loading animations
-- `flutter_slidable` - Swipe actions
+### Background Playback
+- Music continues when you lock your device or switch apps
+- **iOS:** Control from Control Center or Lock Screen
+- **Android:** Control from notification shade
+- All controls (play/pause/skip) work from notifications
 
-### File Handling
-- `file_picker` - Local file selection
-- `path_provider` - Directory access
-- `permission_handler` - Runtime permissions
+### Playlists
+1. Navigate to **Playlists** screen
+2. Create new playlists with custom names
+3. Add songs to playlists from the library
+4. Play entire playlists with one tap
 
-### Networking
-- `web_socket_channel` - Real-time sync
-- `http` & `dio` - REST API calls
+---
+
+## 📦 Key Dependencies
+
+### Audio Stack
+- `just_audio: ^0.9.36` - Audio playback engine
+- `audio_service: ^0.18.12` - Background playback & media controls
+- `audio_session: ^0.1.18` - Audio session management
+
+### State & Storage
+- `provider: ^6.1.1` - State management
+- `hive: ^2.2.3` - Local NoSQL database
+- `hive_flutter: ^1.1.0` - Flutter integration for Hive
+
+### File & Metadata
+- `file_picker: ^8.0.0+1` - Multi-select file import
+- `path_provider: ^2.1.2` - Platform storage paths
+- `metadata_god: ^0.5.2` - Audio metadata extraction
+- `permission_handler: ^11.3.0` - Runtime permissions
 
 ### Utilities
 - `uuid` - Unique ID generation
@@ -181,37 +220,49 @@ flutter run -d macos
 
 ---
 
-## 🔮 Future Enhancements
+## 🎯 Roadmap
 
-### Phase 1: File Management
-- [ ] Local file import
-- [ ] Music library scanning
-- [ ] Metadata extraction
-- [ ] Album art fetching
+### Completed ✅
+- [x] Local music file playback
+- [x] Background audio playback
+- [x] System notification controls (iOS/Android)
+- [x] Lock screen controls
+- [x] Playlist management
+- [x] Queue management
+- [x] Auto-play next song
+- [x] Metadata extraction (title, artist, album, artwork)
+- [x] Multi-select file import
+- [x] Progress tracking and seeking
+- [x] macOS support
 
-### Phase 2: Advanced Playback
-- [ ] Equalizer
-- [ ] Audio effects
-- [ ] Crossfade
+### Planned Features 🚀
+
+**Phase 1: Enhanced Playback**
+- [ ] Shuffle and repeat modes
+- [ ] Equalizer controls
+- [ ] Sleep timer
+- [ ] Playback speed control
 - [ ] Gapless playback
 
-### Phase 3: Social Features
-- [ ] User profiles
-- [ ] Friend system
-- [ ] Collaborative playlists
-- [ ] Activity feed
+**Phase 2: Library Management**
+- [ ] Smart playlists
+- [ ] Recently played
+- [ ] Most played tracks
+- [ ] Search functionality
+- [ ] Sort and filter options
+- [ ] Album and artist grouping
 
-### Phase 4: Cloud Integration
-- [ ] Cloud storage
-- [ ] Cross-device sync via cloud
-- [ ] Playlist backup
-- [ ] Music recommendations
+**Phase 3: Advanced Features**
+- [ ] Lyrics display
+- [ ] Audio effects
+- [ ] Crossfade between tracks
+- [ ] Car mode / Android Auto
+- [ ] Home screen widgets
 
-### Phase 5: Platform Features
-- [ ] Widget support
-- [ ] Lock screen controls
-- [ ] CarPlay / Android Auto
-- [ ] Chromecast support
+**Phase 4: Platform Expansion**
+- [ ] Windows support
+- [ ] Linux support
+- [ ] Web support (limited playback)
 
 ---
 
@@ -224,55 +275,25 @@ flutter test
 
 ---
 
-## 🌐 Deployment
+## 🏗️ Building for Release
 
-### Quick Deploy
-
-Use the automated deployment script:
+### iOS
 ```bash
-./deploy.sh
+flutter build ios --release
 ```
 
-This will:
-1. Clean previous builds
-2. Install dependencies
-3. Build the web app
-4. Let you choose deployment platform (Firebase, local test, or manual)
-
-### Manual Deployment
-
-**Build for Web:**
+### Android
 ```bash
-# Profile build (recommended)
-flutter build web --profile
-
-# Release build (fully optimized)
-flutter build web --release
+flutter build apk --release
+# or for app bundle
+flutter build appbundle --release
 ```
-
-**Deploy to Firebase:**
-```bash
-# First time setup
-npm install -g firebase-tools
-firebase login
-firebase init hosting
-
-# Deploy
-firebase deploy --only hosting
-```
-
-**Other Platforms:**
-- Vercel: `vercel --prod`
-- Netlify: `netlify deploy --prod`
-- GitHub Pages: See `DEPLOYMENT.md`
-
-For complete deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)
 
 ---
 
 ## 📱 Screenshots
 
-*Coming soon - Run the app to see the beautiful UI!*
+*Coming soon - Run the app to see the beautiful gradient UI with album artwork!*
 
 ---
 
@@ -280,13 +301,38 @@ For complete deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
 ---
 
 ## 📄 License
 
-This project is open source and available under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
+
+## 👨‍💻 Author
+
+**Shubham Kumar Shandilya**
+- GitHub: [@shubhamkrshandilya](https://github.com/shubhamkrshandilya)
+
+---
+
+## 🙏 Acknowledgments
+
+- Built with [Flutter](https://flutter.dev/)
+- Audio playback powered by [just_audio](https://pub.dev/packages/just_audio)
+- Background audio using [audio_service](https://pub.dev/packages/audio_service)
+- Local storage with [Hive](https://pub.dev/packages/hive)
+
+---
+
+**Made with ❤️ using Flutter**
+
 
 ## 👨‍💻 Author
 
